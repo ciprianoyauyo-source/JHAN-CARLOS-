@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jhan Carlos Cipriano Yauyo | SENATI</title>
+    <style>
+        * {margin: 0; padding: 0; box-sizing: border-box;}
+        :root {
+            --rojo-neon: #ff4444;
+            --naranja-neon: #ff9500;
+            --amarillo-neon: #ffcc00;
+            --verde-wp: #25D366;
+            --fondo-oscuro: #050508;
+            --tarjeta-fondo: rgba(20,20,35,0.6);
+            --texto-claro: #ffffff;
+            --verde-hacker: #00ff00;
+        }
+        @keyframes brillo {
+            0%, 100% {filter: drop-shadow(0 0 8px var(--rojo-neon));}
+            50% {filter: drop-shadow(0 0 20px var(--naranja-neon)) drop-shadow(0 0 35px var(--amarillo-neon));}
+        }
+        @keyframes borde-luz {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+        @keyframes flotar {
+            0%, 100% {transform: translateY(0);}
+            50% {transform: translateY(-12px);}
+        }
+        @keyframes pulso {
+            0%, 100% {opacity: 1;}
+            50% {opacity: 0.7;}
+        }
+        @keyframes aparecer {
+            from {opacity: 0; transform: translateY(30px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+        @keyframes glowHacker {
+            0%, 100% {box-shadow: 0 0 10px var(--verde-hacker), 0 0 20px var(--verde-hacker);}
+            50% {box-shadow: 0 0 20px var(--verde-hacker), 0 0 40px var(--verde-hacker), 0 0 60px var(--verde-hacker);}
+        }
+        @keyframes scanline {
+            0% {transform: translateY(-100%);}
+            100% {transform: translateY(100%);}
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            color: var(--texto-claro);
+            background: 
+                radial-gradient(circle at top left, rgba(255,68,68,0.15), transparent 45%),
+                radial-gradient(circle at top right, rgba(255,149,0,0.12), transparent 45%),
+                radial-gradient(circle at bottom center, rgba(255,204,0,0.08), transparent 45%),
+                var(--fondo-oscuro);
+            min-height: 100vh;
+            background-attachment: fixed;
+            position: relative;
+            overflow-x: hidden;
+        }
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0,255,0,0.8), transparent);
+            animation: scanline 4s linear infinite;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        .sonido-teclas {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            z-index: 10000;
+            cursor: pointer;
+            box-shadow: 0 0 15px #00ff00;
+            transition: all 0.3s ease;
+        }
+        .sonido-teclas:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 30px #00ff00;
+        }
+        nav {
+            background: rgba(5,5,10,0.85);
+            padding: 1.2rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 2px solid transparent;
+            background-image: linear-gradient(rgba(5,5,10,0.9), rgba(5,5,10,0.9)),
+                            linear-gradient(90deg, var(--rojo-neon), var(--naranja-neon), var(--amarillo-neon), var(--naranja-neon), var(--rojo-neon));
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            box-shadow: 0 0 20px rgba(255,68,68,0.3), 0 4px 30px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+        nav a {
+            color: #ffcdd2;
+            text-decoration: none;
+            padding: 0.9rem 1.4rem;
+            font-weight: 700;
+            border-radius: 10px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        nav a:hover, nav a.active {
+            color: var(--amarillo-neon);
+            background: rgba(255,68,68,0.15);
+            box-shadow: 0 0 15px rgba(255,68,68,0.5), inset 0 0 15px rgba(255,149,0,0.15);
+            transform: scale(1.08);
+        }
+        section {
+            max-width: 1150px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+            display: none;
+            animation: aparecer 0.7s ease forwards;
+        }
+        section:target {display: block;}
+        #inicio {display: block; text-align: center; padding: 3rem 2rem; max-width: 100%;}
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            padding-bottom: 0.7rem;
+            background: linear-gradient(90deg, var(--rojo-neon), var(--naranja-neon), var(--amarillo-neon));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            position: relative;
+        }
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--rojo-neon), var(--naranja-neon), var(--amarillo-neon));
+            border-radius: 2px;
+            box-shadow: 0 0 15px var(--naranja-neon);
+        }
+        h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(90deg, var(--rojo-neon), var(--naranja-neon), var(--amarillo-neon), var(--naranja-neon), var(--rojo-neon));
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: borde-luz 4s linear infinite;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 10px rgba(255,68,68,0.5));
+        }
+        .foto-perfil {
+            width: 200px;
+            height: 240px;
+            border-radius: 24px;
+            margin: 0 auto 1.8rem;
+            overflow: hidden;
+            border: 4px solid transparent;
+            background-image: linear-gradient(#141423, #141423),
+                            linear-gradient(135deg, var(--rojo-neon), var(--naranja-neon), var(--amarillo-neon));
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            animation: flotar 3.5s ease-in-out infinite, brillo 2s ease-in-out infinite, glowHacker 2s ease-in-out infinite;
+            box-shadow: 0 0 30px rgba(255,68,68,0.4), 0 0 60px rgba(255,149,0,0.2);
+        }
+        .foto-perfil img {width: 100%; height: 100%; object-fit: cover;}
+        .etiquetas {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+        .etq {
+            background: rgba(255,68,68,0.12);
+            padding: 0.7rem 1.3rem;
+            border-radius: 50px;
+            border: 2px solid rgba(255,68,68,0.4);
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            box-shadow: 0 0 10px rgba(255,68,68,0.25), inset 0 0 10px rgba(255,149,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .etq:hover {
+            transform: scale(1.1);
+            border-color: var(--amarillo-neon);
+            box-shadow: 0 0 20px rgba(255,204,0,0.4);
+        }
+        .tarjeta {
+            background: var(--tarjeta-fondo);
+            padding: 2.2rem;
+            border-radius: 20px;
+            border: 2px solid transparent;
+            background-image: linear-gradient(rgba(20,20,35,0.7), rgba(20,20,35,0.7)),
+                            linear-gradient(135deg, var(--rojo-neon), var(--naranja-neon));
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            box-shadow: 0 0 20px rgba(255,68,68,0.2), inset 0 0 30px rgba(255,68,68,0.05);
+            transition: all 0.4s ease;
+        }
+        .tarjeta:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 0 35px rgba(255,68,68,0.4), inset 0 0 40px rgba(255,149,0,0.1);
+        }
+        .tarjeta p {margin-bottom: 1rem; font-size: 1rem; line-height: 1.8;}
+        .imagen-destacada {
+            width: 100%;
+            border-radius: 16px;
+            margin: 1.5rem 0;
+            border: 3px solid transparent;
+            background-image: linear-gradient(rgba(20,20,35,0.7), rgba(20,20,35,0.7)),
+                            linear-gradient(135deg, var(--rojo-neon), var(--naranja-neon), var(--amarillo-neon));
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            box-shadow: 0 0 25px rgba(255,149,0,0.3);
+            transition: transform 0.4s ease;
+        }
+        .imagen-destacada:hover {transform: scale(1.02);}
+        .galeria {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .galeria-imagen {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2px solid rgba(255,68,68,0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .galeria-imagen:hover {
+            transform: scale(1.05);
+            border-color: var(--amarillo-neon);
+            box-shadow: 0 0 20px rgba(255,204,0,0.4);
+        }
+        .visor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 2rem;
+        }
+        .visor-activo {display: flex;}
+        .visor-contenido {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+        }
+        .visor-img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(255,204,0,0.3);
+        }
+        .visor-cerrar {
+            position: absolute;
+            top: -2rem;
+            right: 0;
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .visor-cerrar:hover {color: var(--amarillo-neon);}
+        .visor-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #fff;
+            font-size: 2rem;
+            padding: 1rem;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        .visor-nav:hover {
+            background: var(--amarillo-neon);
+            color: #000;
+        }
+        .visor-anterior {left: -4rem;}
+        .visor-siguiente {right: -4rem;}
+        .video-contenedor {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 3px solid transparent;
+            background-image: linear-gradient(rgba(20,20,35,0.7), rgba(20,20,35,0.7)),
+                            linear-gradient(135deg, var(--rojo-neon), var(--naranja-neon), var(--amarillo-neon));
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            box-shadow: 0 0 30px rgba(255,68,68,0.3);
+            margin: 1.5rem 0;
+        }
+        .video-contenedor video, .video-contenedor iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .grid-proyectos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.8rem;
+        }
+        .proyecto {
+            background: rgba(20,20,40,0.6);
+            border-radius: 18px;
+            overflow: hidden;
+            border: 2px solid transparent;
+            background-image: linear-gradient(rgba(20,20,40,0.7), rgba(20,20,40,0.7)),
+                            linear-gradient(135deg, var(--rojo-neon), var(--naranja-neon));
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 15px rgba(255,68,68,0.15);
+        }
+        .proyecto:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 0 30px rgba(255,68,68,0.4), 0 0 50px rgba(255,149,0,0.2);
+        }
+        .proyecto-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .cab-proy {
+            background: linear-gradient(90deg, var(--rojo-neon), var(--naranja-neon), var(--amarillo-neon));
+            padding: 1.2rem 1.4rem;
+            font-weight: 800;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            box-shadow: 0 0 15px rgba(255,149,0,0.4);
+        }
+        .proyecto-contenido {padding: 1.5rem;}
+        .proyecto-contenido p {color: #e0e0e0; margin-bottom: 1.2rem; font-size: 0.98rem;}
+        .etiqueta-tec {
+            display: inline-block;
+            background: rgba(255,204,0,0.15);
+            color: #ffdd00;
+            padding: 0.4rem 0.9rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 0.3rem 0.4rem 0.3rem 0;
+            border: 1px solid rgba(255,204,0,0.3);
+            box-shadow: 0 0 8px rgba(255,204,0,0.15);
+        }
+        .grid-habilidades {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .habilidad {
+            background: rgba(20,20,35,0.6);
+            padding: 1.8rem;
+            border-radius: 16px;
+            border-left: 4px solid;
+            border-image: linear-gradient(180deg, var(--rojo-neon), var(--naranja-neon)) 1;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 15px rgba(255,68,68,0.1);
+        }
+        .habilidad:hover {
+            transform: translateX(10px);
+            box-shadow: 0 0 25px rgba(255,68,68,0.3);
+        }
+        .habilidad h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            color: #fff;
+        }
+        .barra {
+            height: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            margin-top: 0.8rem;
+            overflow: hidden;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+        }
+        .relleno {
+            height: 100%;
+            background: linear-gradient(90deg, var(--rojo-neon), var(--naranja-neon), var(--amarillo-neon));
+            border-radius: 5px;
+            box-shadow: 0 0 10px var(--naranja-neon);
+            animation: pulso 2s ease-in-out infinite;
+        }
+        .grid-metas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+        .meta-tarjeta {
+            background: rgba(20,20,35,0.6);
+            padding: 1.8rem;
+            border-radius: 16px;
+            border-left: 4px solid;
+            border-image: linear-gradient(180deg, var(--rojo-neon), var(--naranja-neon), var(--amarillo-neon)) 1;
+            transition: all 0.4s ease;
+        }
+        .meta-tarjeta:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 0 25px rgba(255,149,0,0.3);
+        }
+        .linea-tiempo {position: relative; padding-left: 2.5rem;}
+        .linea-tiempo::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, var(--rojo-neon), var(--naranja-neon), var(--amarillo-neon));
+            box-shadow: 0 0 10px var(--naranja-neon);
+            border-radius: 2px;
+        }
+        .evento {position: relative; margin-bottom: 2.5rem;}
+        .evento::before {
+            content: '';
+            position: absolute;
+            left: -2.9rem;
+            top: 0.3rem;
+            width: 18px;
+            height: 18px;
+            background: var(--amarillo-neon);
+            border-radius: 50%;
+            border: 3px solid var(--fondo-oscuro);
+            box-shadow: 0 0 15px var(--amarillo-neon);
+        }
+        .fecha {
+            color: var(--amarillo-neon);
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 8px rgba(255,204,0,0.5);
+        }
+        .contacto p {
+            margin: 1rem 0;
+            font-size: 1.1rem;
+            color: #e0e0e0;
+        }
+        .contacto a {
+            color: var(--amarillo-neon);
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+        .contacto a:hover {
+            text-shadow: 0 0 10px var(--amarillo-neon);
+        }
+        .boton-wp {
+            display: inline-block;
+            background: linear-gradient(135deg, #25D366, #128C7E, #25D366);
+            background-size: 200% auto;
+            color: white !important;
+            padding: 1.2rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-top: 1.5rem;
+            text-decoration: none;
+            box-shadow: 0 0 20px rgba(37,211,102,0.5), 0 6px 30px rgba(0,0,0,0.3);
+            transition: all 0.4s ease;
+            animation: borde-luz 3s linear infinite;
+        }
+        .boton-wp:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 0 30px rgba(37,211,102,0.7), 0 10px 40px rgba(0,0,0,0.4);
+        }
+        footer {
+            text-align: center;
+            padding: 2.5rem;
+            color: #ffcdd2;
+            margin-top: 3rem;
+            border-top: 2px solid transparent;
+            background-image: linear-gradient(rgba(5,5,10,0.9), rgba(5,5,10,0.9)),
+                            linear-gradient(90deg, transparent, var(--rojo-neon), var(--naranja-neon), var(--amarillo-neon), transparent);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+        }
+    </style>
+</head>
+<body>
+    <!-- ❌ Quité la lluvia de letras aquí -->
+    <div class="scanline"></div>
+    <div class="sonido-teclas" id="botonSonido">🔇 Activar sonido teclas</div>
+
+    <nav>
+        <ul>
+            <li><a href="#inicio">🏠 Inicio</a></li>
+            <li><a href="#sobre-mi">👨‍💻 Sobre Mí</a></li>
+            <li><a href="#trayectoria">🎓 Trayectoria</a></li>
+            <li><a href="#habilidades">💪 Habilidades</a></li>
+            <li><a href="#proyectos">🚀 Proyectos</a></li>
+            <li><a href="#metas">🎯 Metas</a></li>
+            <li><a href="#multimedia">📸 Multimedia</a></li>
+            <li><a href="#contacto">📬 Contacto</a></li>
+        </ul>
+    </nav>
+
+    <section id="inicio">
+        <div class="foto-perfil">
+            <img src="jhan.jpeg" alt="Jhan Carlos Cipriano Yauyo" onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop'">
+        </div>
+        <h1>✨ Jhan Carlos Cipriano Yauyo ✨</h1>
+        <p style="font-size: 1.3rem; color: #ffcdd2; margin-bottom: 1rem;">🎓 Estudiante de SENATI — Ingeniería de Software con Inteligencia Artificial</p>
+        <p style="font-size: 1.1rem;">📍 Cerro de Pasco, Perú 🇵🇪</p>
+        <div class="etiquetas">
+            <span class="etq">📚 Estudiante</span>
+            <span class="etq">💻 Programación</span>
+            <span class="etq">🐍 Python</span>
+            <span class="etq">📐 Matemáticas</span>
+            <span class="etq">🚀 Inteligencia Artificial</span>
+        </div>
+        <br>
+        <p style="font-size: 1.1rem; color: #aaa;">👇 Haz clic en cada opción del menú para ver más</p>
+    </section>
+
+    <section id="sobre-mi">
+        <h2>👨‍💻 Sobre Mí</h2>
+        <div class="tarjeta">
+            <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=400&fit=crop" alt="Programación y tecnología" class="imagen-destacada">
+            <p>¡Hola! 👋 Soy <strong style="color: var(--amarillo-neon); font-size: 1.2rem;">Jhan Carlos Cipriano Yauyo</strong>, un estudiante apasionado de la tecnología.</p>
+            <p>Actualmente curso <strong>Ingeniería de Software con Inteligencia Artificial en SENATI</strong>. Estoy construyendo mis bases en programación, desarrollo web, lógica, matemáticas y todo lo relacionado con el futuro tecnológico.</p>
+            <p>Mi objetivo no es solo aprender, sino <strong>crear soluciones que sirvan de verdad</strong>. Entender cómo funcionan las cosas por dentro para innovar y aportar valor.</p>
+            <p>💪 Soy constante, perseverante y creo firmemente que <strong>con esfuerzo y curiosidad todo se puede lograr</strong>.</p>
+            <p>🇵🇪 Cerro de Pasco, Perú | 📖 En formación constante | 🤝 Abierto a colaborar y crecer juntos</p>
+        </div>
+    </section>
+
+    <section id="trayectoria">
+        <h2>🎓 Mi Trayectoria</h2>
+        <div class="tarjeta">
+            <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=400&fit=crop" alt="Formación académica" class="imagen-destacada">
+        </div>
+        <div class="linea-tiempo" style="margin-top: 2rem;">
+            <div class="evento">
+                <p class="fecha">2026 — Presente 🔥</p>
+                <h3 style="color: #fff; margin-bottom: 0.5rem;">SENATI — Ingeniería de Software con IA</h3>
+                <p>Formación profesional integral: lógica de programación, Python, desarrollo web con HTML y CSS, bases de datos SQL, matemáticas aplicadas y fundamentos de Inteligencia Artificial.</p>
+            </div>
+            <div class="evento">
+                <p class="fecha">2026 ⚡</p>
+                <h3 style="color: #fff; margin-bottom: 0.5rem;">Ingreso a SENATI</h3>
+                <p>Superé el examen de admisión demostrando compromiso y capacidad. Empecé oficialmente mi camino profesional en el mundo de la tecnología.</p>
+            </div>
+            <div class="evento">
+                <p class="fecha">2019 — 2025 📖</p>
+                <h3 style="color: #fff; margin-bottom: 0.5rem;">Educación Secundaria — Mención en Informática</h3>
+                <p>Descubrí mi vocación. Me formé en herramientas informáticas, pensamiento lógico y resolución de problemas. Allí nació mi pasión por la tecnología.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="habilidades">
+        <h2>🛠️ Mis Habilidades</h2>
+        <div class="grid-habilidades">
+            <div class="habilidad">
+                <h3>📐 Lógica de Programación</h3>
+                <p>Descomponer problemas complejos en pasos claros y ordenados.</p>
+                <div class="barra"><div class="relleno" style="width:45%"></div></div>
+            </div>
+            <div class="habilidad">
+                <h3>🐍 Python</h3>
+                <p>Variables, funciones, condicionales, bucles y automatización de tareas.</p>
+                <div class="barra"><div class="relleno" style="width:40%"></div></div>
+            </div>
+            <div class="habilidad">
+                <h3>🌐 HTML y CSS</h3>
+                <p>Estructurar, diseñar y animar páginas web responsivas y modernas.</p>
+                <div class="barra"><div class="relleno" style="width:50%"></div></div>
+            </div>
+            <div class="habilidad">
+                <h3>📊 Matemáticas Aplicadas</h3>
+                <p>La base lógica y numérica detrás de cada algoritmo y de la Inteligencia Artificial.</p>
+                <div class="barra"><div class="relleno" style="width:55%"></div></div>
+            </div>
+            <div class="habilidad">
+                <h3>🗄️ Bases de Datos</h3>
+                <p>Organizar, almacenar y consultar información de forma eficiente y ordenada.</p>
+                <div class="barra"><div class="relleno" style="width:30%"></div></div>
+            </div>
+            <div class="habilidad">
+                <h3>🧠 Fundamentos de IA</h3>
+                <p>Comprender qué es, cómo funciona y en qué campos se aplica hoy en día.</p>
+                <div class="barra"><div class="relleno" style="width:25%"></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="proyectos">
+        <h2>🚀 Mis Proyectos</h2>
+        <div class="grid-proyectos">
+            <div class="proyecto">
+                <img src="https://images.unsplash.com/photo-1467232004584-aec91309560c?w=400&h=200&fit=crop" alt="Página Web" class="proyecto-img">
+                <div class="cab-proy">📄 Mi Página Web</div>
+                <div class="proyecto-contenido">
+                    <p>Este portafolio. Construido con HTML y CSS desde cero. Evoluciona conmigo día a día.</p>
+                    <span class="etiqueta-tec">HTML5</span>
+                    <span class="etiqueta-tec">CSS3</span>
+                    <span class="etiqueta-tec">Responsive</span>
+                </div>
+            </div>
+            <div class="proyecto">
+                <img src="https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=400&h=200&fit=crop" alt="Cálculos y Python" class="proyecto-img">
+                <div class="cab-proy">🧮 Calculadora Básica</div>
+                <div class="proyecto-contenido">
+                    <p>Programa en Python que suma, resta, multiplica y divide. Valida entradas y maneja errores.</p>
+                    <span class="etiqueta-tec">Python</span>
+                    <span class="etiqueta-tec">Funciones</span>
+                    <span class="etiqueta-tec">Validación</span>
+                </div>
+            </div>
+            <div class="proyecto">
+                <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=200&fit=crop" alt="Base de Datos" class="proyecto-img">
+                <div class="cab-proy">🗃️ Registro de Datos</div>
+                <div class="proyecto-contenido">
+                    <p>Diseño de base de datos para guardar y consultar información. Estructura ordenada y búsquedas.</p>
+                    <span class="etiqueta-tec">SQL</span>
+                    <span class="etiqueta-tec">Bases de Datos</span>
+                    <span class="etiqueta-tec">Organización</span>
+                </div>
+            </div>
+            <div class="proyecto">
+                <img src="https://images.unsplash.com/photo-1509228460512-437121156f02?w=400&h=200&fit=crop" alt="Lógica y patrones" class="proyecto-img">
+                <div class="cab-proy">🧠 Ejercicios de Lógica</div>
+                <div class="proyecto-contenido">
+                    <p>Retos numéricos y patrones. Entreno mi mente para pensar como programador.</p>
+                    <span class="etiqueta-tec">Lógica</span>
+                    <span class="etiqueta-tec">Bucles</span>
+                    <span class="etiqueta-tec">Patrones</span>
+                </div>
+            </div>
+            <div class="proyecto">
+                <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=200&fit=crop" alt="Inteligencia Artificial" class="proyecto-img">
+                <div class="cab-proy">📖 Glosario de IA</div>
+                <div class="proyecto-contenido">
+                    <p>Conceptos clave explicados: tipos de IA, aprendizaje, redes neuronales y ética.</p>
+                    <span class="etiqueta-tec">Inteligencia Artificial</span>
+                    <span class="etiqueta-tec">Aprendizaje</span>
+                    <span class="etiqueta-tec">Redes Neuronales</span>
+                </div>
+            </div>
+            <div class="proyecto">
+                <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=200&fit=crop" alt="Este portafolio" class="proyecto-img">
+                <div class="cab-proy">💻 Este Portafolio</div>
+                <div class="proyecto-contenido">
+                    <p>La página que ves ahora. Mi carta de presentación digital, construida con pasión.</p>
+                    <span class="etiqueta-tec">Diseño Web</span>
+                    <span class="etiqueta-tec">Animaciones</span>
+                    <span class="etiqueta-tec">Responsive</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="metas">
+        <h2>🎯 Mis Metas</h2>
+        <div class="grid-metas">
+            <div class="meta-tarjeta">
+                <h3 style="color: var(--naranja-neon); margin-bottom: 0.8rem;">📚 Avanzar en mi Carrera</h3>
+                <p>Aprobar cada curso con excelencia, consolidar mis conocimientos y aprovechar al máximo la formación en SENATI.</p>
+            </div>
+            <div class="meta-tarjeta">
+                <h3 style="color: var(--naranja-neon); margin-bottom: 0.8rem;">💻 Dominar la Programación</h3>
+                <p>Escribir código claro, limpio y funcional. Crear aplicaciones reales que resuelvan problemas.</p>
+            </div>
+            <div class="meta-tarjeta">
+                <h3 style="color: var(--naranja-neon); margin-bottom: 0.8rem;">🧠 Especializarme en IA</h3>
+                <p>Profundizar hasta desarrollar mis propios proyectos de Inteligencia Artificial.</p>
+            </div>
+            <div class="meta-tarjeta">
+                <h3 style="color: var(--naranja-neon); margin-bottom: 0.8rem;">🏆 Graduarme y Servir</h3>
+                <p>Ser un profesional competente. Aportar soluciones a mi comunidad y demostrar que en Perú también se puede crecer.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="multimedia">
+        <h2>📸 Multimedia</h2>
+        <div class="tarjeta">
+            <h3 style="color: var(--amarillo-neon); margin-bottom: 1rem;">🎬 Ingeniería de Software con Inteligencia Artificial</h3>
+            <div class="video-contenedor">
+                <video controls preload="auto" autoplay muted loop poster="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=450&fit=crop">
+                    <source src="https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_2mb.mp4" type="video/mp4">
+                    Tu navegador no soporta la reproducción de video.
+                </video>
+            </div>
+            <p style="color: #aaa; font-size: 0.9rem;">✅ Video funcional. Cuando tengas tu propio video, ponlo en la carpeta y cambia el enlace por <code>presentacion.mp4</code></p>
+        </div>
+        <div class="tarjeta" style="margin-top: 2rem;">
+            <h3 style="color: var(--amarillo-neon); margin-bottom: 1rem;">📹 Más sobre Inteligencia Artificial</h3>
+            <div class="video-contenedor">
+                <iframe src="https://www.youtube.com/embed/xtvXl2fXz8o" title="Ingeniería de Software con Inteligencia Artificial" allowfullscreen allow="autoplay"></iframe>
+            </div>
+        </div>
+        <div class="tarjeta" style="margin-top: 2rem;">
+            <h3 style="color: var(--amarillo-neon); margin-bottom: 1rem;">🖼️ Galería — Mi Entorno</h3>
+            <p style="color: #aaa; margin-bottom: 1rem;">💡 Haz clic en cualquier imagen para ampliarla</p>
+            <div class="galeria">
+                <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=300&fit=crop" alt="Código y desarrollo" class="galeria-imagen" data-indice="0">
+                <img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=400&h=300&fit=crop" alt="Tecnología" class="galeria-imagen" data-indice="1">
+                <img src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=400&h=300&fit=crop" alt="Equipo de trabajo" class="galeria-imagen" data-indice="2">
+                <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop" alt="Inteligencia Artificial" class="galeria-imagen" data-indice="3">
+                <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&h=300&fit=crop" alt="Inspiración" class="galeria-imagen" data-indice="4">
+                <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=300&fit=crop" alt="Futuro digital" class="galeria-imagen" data-indice="5">
+            </div>
+        </div>
+    </section>
+
+    <div id="visor" class="visor">
+        <div class="visor-contenido">
+            <span class="visor-cerrar" onclick="cerrarVisor()">&times;</span>
+            <button class="visor-nav visor-anterior" onclick="anteriorImagen()">&#10094;</button>
+            <img id="imagen-visor" src="" alt="Imagen ampliada" class="visor-img">
+            <button class="visor-nav visor-siguiente" onclick="siguienteImagen()">&#10095;</button>
+        </div>
+    </div>
+
+    <section id="contacto">
+        <h2>📬 Contáctame</h2>
+        <div class="tarjeta contacto">
+            <img src="https://images.unsplash.com/photo-1516387938699-a93567ec168e?w=800&h=300&fit=crop" alt="Conectemos" class="imagen-destacada">
+            <p>📱 <strong>WhatsApp:</strong> <a href="https://wa.me/51974440471" target="_blank">+51 974 440 471</a></p>
+            <p>📧 <strong>Correo:</strong> <a href="mailto:ciprianoyauyo@gmail.com">ciprianoyauyo@gmail.com</a></p>
+            <p>📍 <strong>Ubicación:</strong> Cerro de Pasco, Perú 🇵🇪</p>
+            <p>🎓 <strong>Institución:</strong> SENATI — Ingeniería de Software con Inteligencia Artificial</p>
+            <p>💡 <strong>Disponibilidad:</strong> Siempre dispuesto a aprender, colaborar y crecer juntos 💪</p>
+            <a href="https://wa.me/51974440471" target="_blank" class="boton-wp">💬 ¡Escríbeme por WhatsApp!</a>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 ✨ Jhan Carlos Cipriano Yauyo ✨ | SENATI</p>
+        <p>"El éxito se construye paso a paso: hoy aprendo, mañana creo" 📚✨</p>
+    </footer>
+
+    <script>
+        // Navegación activa
+        window.addEventListener('hashchange', function() {
+            document.querySelectorAll('nav a').forEach(link => link.classList.remove('active'));
+            const hash = window.location.hash || '#inicio';
+            document.querySelector('nav a[href="' + hash + '"]').classList.add('active');
+        });
+        window.addEventListener('load', function() {
+            const hash = window.location.hash || '#inicio';
+            document.querySelector('nav a[href="' + hash + '"]').classList.add('active');
+        });
+
+        // Galería de imágenes
+        const imagenes = [
+            "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=600&fit=crop",
+            "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=800&h=600&fit=crop",
+            "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=800&h=600&fit=crop",
+            "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop",
+            "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&h=600&fit=crop",
+            "https://images.unsplash.com/photo-1518770660439-46361
